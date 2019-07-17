@@ -1,0 +1,8 @@
+name: llvm-crystal
+version: 0.0.1
+license: MIT
+authors:
+  - shdown <shdownnine@gmail.com>
+
+description: LLVM-C bindings for Crystal
+crystal: 0.21.1
