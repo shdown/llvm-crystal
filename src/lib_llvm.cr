@@ -1,4 +1,4 @@
-require "lib_llvm_c"
+require "./lib_llvm_c"
 
 module LibLLVM
     def self.slurp_string(pmsg : LibC::Char*)
