@@ -20,6 +20,27 @@ module LibLLVM
         end
     end
 
+    class BasicBlock
+        def initialize(@value : LibLLVM_C::BasicBlockRef)
+        end
+
+        def to_unsafe
+            @value
+        end
+
+        def instructions
+            pins = LibLLVM_C.get_first_instruction(@value)
+            while pins
+                yield pins
+                pins = LibLLVM_C.get_next_instruction(pins)
+            end
+        end
+
+        def last_instruction
+            return LibLLVM_C.get_last_instruction(@value)
+        end
+    end
+
     class Function
         def initialize(@value : LibLLVM_C::ValueRef)
         end
@@ -35,6 +56,10 @@ module LibLLVM
 
         def declaration?
             return LibLLVM_C.is_declaration(@value) != 0
+        end
+
+        def entry_basic_block
+            return BasicBlock.new(LibLLVM_C.get_entry_basic_block(@value))
         end
     end
 
