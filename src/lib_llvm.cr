@@ -41,6 +41,7 @@ module LibLLVM
         end
 
         def_equals @value
+        def_hash @value
     end
 
     class Function
