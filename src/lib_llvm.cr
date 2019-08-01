@@ -20,7 +20,7 @@ module LibLLVM
         end
     end
 
-    class BasicBlock
+    struct BasicBlock
         def initialize (@value : LibLLVM_C::BasicBlockRef)
         end
 
@@ -44,7 +44,7 @@ module LibLLVM
         def_hash @value
     end
 
-    class Function
+    struct Function
         def initialize (@value : LibLLVM_C::ValueRef)
         end
 
