@@ -36,8 +36,16 @@ module LibLLVM
             end
         end
 
-        def last_instruction
-            return LibLLVM_C.get_last_instruction(@value)
+        def terminator
+            return LibLLVM_C.get_basic_block_terminator(@value)
+        end
+
+        def successors
+            pins = terminator
+            raise "Basic block has no terminator" unless pins
+            (0...LibLLVM_C.get_num_successors(pins)).each do |i|
+                yield LibLLVM::BasicBlock.new(LibLLVM_C.get_successor(pins, i))
+            end
         end
 
         def_equals @value
