@@ -18,6 +18,9 @@ module LibLLVM
         def finalize
             LibLLVM_C.dispose_memory_buffer(@value)
         end
+
+        def_equals @value
+        def_hash @value
     end
 
     struct BasicBlock
@@ -44,7 +47,7 @@ module LibLLVM
             pins = terminator
             raise "Basic block has no terminator" unless pins
             (0...LibLLVM_C.get_num_successors(pins)).each do |i|
-                yield LibLLVM::BasicBlock.new(LibLLVM_C.get_successor(pins, i))
+                yield BasicBlock.new(LibLLVM_C.get_successor(pins, i))
             end
         end
 
@@ -72,6 +75,9 @@ module LibLLVM
         def entry_basic_block
             return BasicBlock.new(LibLLVM_C.get_entry_basic_block(@value))
         end
+
+        def_equals @value
+        def_hash @value
     end
 
     class IrModule
@@ -93,16 +99,19 @@ module LibLLVM
                 pfunc = LibLLVM_C.get_next_function(pfunc)
             end
         end
+
+        def_equals @value
+        def_hash @value
     end
 
-    def self.buffer_from_file (path : String)
+    def self.buffer_from_file (path)
         if LibLLVM_C.create_memory_buffer_with_contents_of_file(path, out pbuf, out pmsg) != 0
             raise "Cannot open bitcode file: " + slurp_string(pmsg)
         end
         return IrBuffer.new(pbuf)
     end
 
-    def self.module_from_buffer (buf : IrBuffer)
+    def self.module_from_buffer (buf)
         raise "Cannot parse bitcode" unless
             LibLLVM_C.parse_bitcode2(buf, out pmodule) == 0
         return IrModule.new(pmodule)
