@@ -45,6 +45,18 @@ module LibLLVM
             return Incoming.new(@value)
         end
 
+        def to_s
+            return LibLLVM.slurp_string(LibLLVM_C.print_value_to_string(@value))
+        end
+
+        def to_s (io)
+            io << to_s
+        end
+
+        def conditional?
+            return LibLLVM_C.is_conditional(@value) != 0
+        end
+
         def_equals @value
         def_hash @value
     end
@@ -69,14 +81,6 @@ module LibLLVM
 
         def_equals @value
         def_hash @value
-    end
-
-    struct Signature
-        def initialize (
-                @ret_ty : LibLLVM_C::TypeRef,
-                @params : Array(LibLLVM_C::ValueRef),
-                @is_var_arg : Bool)
-        end
     end
 
     struct Function
@@ -115,7 +119,7 @@ module LibLLVM
                 nparams
             end
             is_var_arg = LibLLVM_C.is_function_var_arg(func_ty) != 0
-            return Signature.new(ret_ty: ret_ty, params: params, is_var_arg: is_var_arg)
+            return ret_ty, params, is_var_arg
         end
 
         def_equals @value
