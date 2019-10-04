@@ -4,12 +4,6 @@ private lib LibCString
     fun strlen (s : LibC::Char*) : LibC::SizeT
 end
 
-private macro def_unsafe_at_compat_shim
-    def unsafe_at (i)
-        unsafe_fetch(i)
-    end
-end
-
 module LibLLVM
 
 def self.slurp_string (pmsg : LibC::Char*) : String
@@ -152,13 +146,13 @@ struct BasicBlock
     end
 
     def instructions
-        return InstructionCollection.new(@value)
+        InstructionCollection.new(@value)
     end
 
     def terminator
         pins = LibLLVM_C.get_basic_block_terminator(@value)
         raise "Basic block has no terminator" unless pins
-        return Instruction.new(pins)
+        Instruction.new(pins)
     end
 
     def to_unsafe
@@ -238,11 +232,11 @@ struct Function
     include ValueMethods
 
     def declaration?
-        return LibLLVM_C.is_declaration(@value) != 0
+        LibLLVM_C.is_declaration(@value) != 0
     end
 
     def entry_basic_block
-        return BasicBlock.new(LibLLVM_C.get_entry_basic_block(@value))
+        BasicBlock.new(LibLLVM_C.get_entry_basic_block(@value))
     end
 
     def function_type
@@ -286,8 +280,6 @@ private struct ParameterCollection
     def unsafe_fetch (i)
         Any.new(@data[i])
     end
-
-    def_unsafe_at_compat_shim
 end
 
 private struct SuccessorCollection
@@ -304,8 +296,6 @@ private struct SuccessorCollection
     def unsafe_fetch (i)
         BasicBlock.new(LibLLVM_C.get_successor(@instr, i))
     end
-
-    def_unsafe_at_compat_shim
 end
 
 private struct OperandCollection
@@ -322,8 +312,6 @@ private struct OperandCollection
     def unsafe_fetch (i)
         Any.new(LibLLVM_C.get_operand(@instr, i))
     end
-
-    def_unsafe_at_compat_shim
 end
 
 private struct StructElemCollection
@@ -340,8 +328,6 @@ private struct StructElemCollection
     def unsafe_fetch (i)
         Type.new(LibLLVM_C.struct_get_type_at_index(@type, i))
     end
-
-    def_unsafe_at_compat_shim
 end
 
 private struct IncomingCollection
@@ -361,8 +347,6 @@ private struct IncomingCollection
             Any.new(LibLLVM_C.get_incoming_value(@instr, i))
         }
     end
-
-    def_unsafe_at_compat_shim
 end
 
 private struct FunctionCollection
