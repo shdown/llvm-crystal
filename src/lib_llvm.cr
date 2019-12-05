@@ -199,6 +199,10 @@ struct Type
         LibLLVM_C.is_opaque_struct(@value) != 0
     end
 
+    def packed_struct?
+        LibLLVM_C.is_packed_struct(@value) != 0
+    end
+
     def element_type
         Type.new(LibLLVM_C.get_element_type(@value))
     end
@@ -361,6 +365,15 @@ private struct FunctionCollection
             yield Function.new(pfunc)
             pfunc = LibLLVM_C.get_next_function(pfunc)
         end
+    end
+
+    def []? (name)
+        pfunc = LibLLVM_C.get_named_function(@owner, name)
+        pfunc ? Function.new(pfunc) : nil
+    end
+
+    def [] (name)
+        self[name]? || raise "Cannot find function named '#{name}'"
     end
 end
 
