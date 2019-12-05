@@ -59,6 +59,28 @@ struct Any
     def zero_extended_int_value
         LibLLVM_C.const_int_get_z_ext_value(@value)
     end
+
+    def const_opcode
+        LibLLVM_C.get_const_opcode(@value)
+    end
+
+    def const_operands
+        OperandCollection.new(@value)
+    end
+
+    def global_initializer
+        p = LibLLVM_C.get_initializer(@value)
+        p ? Any.new(p) : nil
+    end
+
+    def const_string?
+        LibLLVM_C.is_constant_string(@value) != 0
+    end
+
+    def to_const_string
+        buf = LibLLVM_C.get_as_string(@value, out nbuf)
+        String.new(buf, nbuf)
+    end
 end
 
 class MemoryBuffer
@@ -165,6 +187,14 @@ end
 
 struct Type
     def initialize (@value : LibLLVM_C::TypeRef)
+    end
+
+    def self.new_void
+        self.new(LibLLVM_C.void_type)
+    end
+
+    def self.new_integral (nbits)
+        self.new(LibLLVM_C.int_type(nbits))
     end
 
     def kind
