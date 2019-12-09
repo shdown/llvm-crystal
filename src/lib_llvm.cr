@@ -79,7 +79,7 @@ struct Any
 
     def to_const_string
         buf = LibLLVM_C.get_as_string(@value, out nbuf)
-        String.new(buf, nbuf)
+        Bytes.new(buf, nbuf).to_a
     end
 end
 
@@ -195,6 +195,10 @@ struct Type
 
     def self.new_integral (nbits)
         self.new(LibLLVM_C.int_type(nbits))
+    end
+
+    def self.new_array (elem_type, length)
+        self.new(LibLLVM_C.array_type(elem_type, length))
     end
 
     def kind
